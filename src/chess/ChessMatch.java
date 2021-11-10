@@ -25,14 +25,28 @@ public class ChessMatch {
         return mat;
     }
     
+    public boolean[][] possibleMoves(ChessPosition sourcePosition){
+    	var position = sourcePosition.toPosition();
+    	validateSourcePosition(position);
+    	
+    	return this.board.piece(position).possibleMoves();
+    }
+    
     public ChessPiece performChessMove(ChessPosition source,ChessPosition target) {
     	Position sourceP = source.toPosition();
     	Position targetP = target.toPosition();
     	
     	validateSourcePosition(sourceP);
+    	validateTargetPosition(sourceP,targetP);
     	Piece capturedPiece = makeMove(sourceP,targetP);
     	return (ChessPiece)capturedPiece;
     }
+
+	private void validateTargetPosition(Position source, Position target) {
+		if (!this.board.piece(source).possibleMove(target)) {
+			throw new ChessException("Invalid move");			
+		}
+	}
 
 	private void validateSourcePosition(Position position) {
 		if (!board.thereIsAPiece(position)){
