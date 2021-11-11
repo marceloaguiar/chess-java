@@ -1,12 +1,9 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import chess.ChessException;
 import chess.ChessMatch;
-import chess.ChessPiece;
 import chess.ChessPosition;
 
 public class Program {
@@ -14,17 +11,14 @@ public class Program {
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
-		ChessMatch chessMatch = new ChessMatch();
-		
-		//TODO: Nao faz sentid este controle estar fora da classe chessMatch
-		List<ChessPiece> captured = new ArrayList<>();
+		ChessMatch chessMatch = new ChessMatch();		
 
 		while (!chessMatch.getCheckMate()) {
 
 			try {
 				UI.clearScreen();
 				//UI.printBoard(chessMatch.getPieces());
-				UI.printMatch(chessMatch,captured);
+				UI.printMatch(chessMatch);
 				System.out.println();
 				System.out.println("Source: ");
 				ChessPosition source = UI.readChessPosition(sc);
@@ -38,12 +32,8 @@ public class Program {
 				System.out.println("Target: ");
 				ChessPosition target = UI.readChessPosition(sc);
 
-				ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
-				
-				if (capturedPiece!=null) {
-					captured.add(capturedPiece);
-				}
-				
+				chessMatch.performChessMove(source, target);
+								
 				if (chessMatch.getPromoted() != null) {
 					System.out.print("Enter piece for promotion (B/N/R/Q): ");
 					String type = sc.nextLine().toUpperCase();
@@ -64,7 +54,7 @@ public class Program {
 			}					
 		}
 		UI.clearScreen();
-		UI.printMatch(chessMatch, captured);
+		UI.printMatch(chessMatch);
 
 	}
 }

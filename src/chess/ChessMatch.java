@@ -25,8 +25,10 @@ public class ChessMatch {
 	private ChessPiece enPassantVulnerable;
 	private ChessPiece promoted;    
     
-    private List<Piece> piecesOnTheBoard = new ArrayList<>();
-    private List<Piece> piecesCaptured = new ArrayList<>();
+    private List<ChessPiece> piecesOnTheBoard = new ArrayList<>();
+    private List<ChessPiece> piecesCaptured = new ArrayList<>();
+    private List<ChessMoviment> writeHistoryMovement = new ArrayList<>();
+    private List<ChessMoviment> blackHistoryMovement = new ArrayList<>();
 
     public ChessMatch() {
         this.board = new Board(8,8);
@@ -59,6 +61,40 @@ public class ChessMatch {
 	public ChessPiece getPromoted() {
 		return promoted;
 	}	
+	
+	public List<ChessMoviment> getWriteHistoryMovement() {
+		return writeHistoryMovement;
+	}
+
+	public List<ChessMoviment> getBlackHistoryMovement() {
+		return blackHistoryMovement;
+	}
+	
+	public List<ChessPiece> getPiecesCaptured() {
+		return piecesCaptured;
+	}
+		
+	
+	
+	public int getMovimentsMovementsQuantity() {
+		int movesQuantity=0;
+		List<Piece> piecesList = this.piecesOnTheBoard.stream()
+										.filter(n->((ChessPiece)n).getColor()==this.currentPlayer)									
+										.collect(Collectors.toList());
+		
+		for (Piece piece : piecesList) {
+			var moves = ((ChessPiece)piece).possibleMoves();
+			for (int i = 0; i < moves.length; i++) {
+				for (int j = 0; j < moves.length; j++) {
+					if (moves[i][j]==true) {
+						movesQuantity++;
+					}
+				}
+			}
+			
+		}
+		return movesQuantity;
+	}
 
     public ChessPiece[][] getPieces(){
 
@@ -116,6 +152,13 @@ public class ChessMatch {
 		}
 		else {
 			enPassantVulnerable = null;
+		}
+		
+		if (currentPlayer == Color.WHITE) {
+			this.writeHistoryMovement.add(new ChessMoviment(sourcePosition, targetPosition));
+		}
+		else {
+			this.blackHistoryMovement.add(new ChessMoviment(sourcePosition, targetPosition));	
 		}
 		
 		return (ChessPiece)capturedPiece;
@@ -235,7 +278,7 @@ public class ChessMatch {
 		
 		if (capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
-			piecesCaptured.add(capturedPiece);
+			piecesCaptured.add( (ChessPiece)capturedPiece);
 		}
 		
 		// #specialmove castling kingside rook
@@ -267,7 +310,7 @@ public class ChessMatch {
 					pawnPosition = new Position(target.getRow() - 1, target.getColumn());
 				}
 				capturedPiece = board.removePiece(pawnPosition);
-				piecesCaptured.add(capturedPiece);
+				piecesCaptured.add((ChessPiece)capturedPiece);
 				piecesOnTheBoard.remove(capturedPiece);
 			}
 		}
@@ -283,7 +326,7 @@ public class ChessMatch {
 		if (capturedPiece != null) {
 			board.placePiece(capturedPiece, target);
 			this.piecesCaptured.remove(capturedPiece);
-			this.piecesOnTheBoard.add(capturedPiece);
+			this.piecesOnTheBoard.add((ChessPiece)capturedPiece);
 		}
 
 		// #specialmove castling kingside rook
@@ -386,5 +429,4 @@ public class ChessMatch {
         placeNewPiece('g', 7, new Pawn(board, Color.BLACK,this));
         placeNewPiece('h', 7, new Pawn(board, Color.BLACK,this));    	
     }
-
 }

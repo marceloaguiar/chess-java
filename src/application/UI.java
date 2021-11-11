@@ -62,12 +62,15 @@ public class UI {
 		System.out.println("  a b c d e f g h");
 	}
 	
-	public static void printMatch(ChessMatch match,List<ChessPiece> capturedPieces) {
+	public static void printMatch(ChessMatch match) {
 		printBoard(match.getPieces());
 		System.out.println();
-		printCapturedPieces(capturedPieces);
+		printCapturedPieces(match);
+		System.out.println();
+		printMovementHistory(match);
 		System.out.println();
 		System.out.println("Turn : " + match.getTurn());
+		System.out.println("Possible Movements Quantity : " + match.getMovimentsMovementsQuantity());		
 		
 		if (!match.getCheckMate()) {
 			System.out.println("Waiting player : " + match.getCurrentPlayer());
@@ -108,10 +111,13 @@ public class UI {
 		System.out.print(" ");
 	}
 
-	private static void printCapturedPieces(List<ChessPiece> capturedPieces) {
+	private static void printCapturedPieces(ChessMatch match) {
 		
-		List<ChessPiece> write = capturedPieces.stream().filter(n->n.getColor()==Color.WHITE).collect(Collectors.toList());
-		List<ChessPiece> black = capturedPieces.stream().filter(n->n.getColor()==Color.BLACK).collect(Collectors.toList());
+		//List<ChessPiece> write = capturedPieces.stream().filter(n->n.getColor()==Color.WHITE).collect(Collectors.toList());
+		//List<ChessPiece> black = capturedPieces.stream().filter(n->n.getColor()==Color.BLACK).collect(Collectors.toList());
+		
+		List<ChessPiece> write = match.getPiecesCaptured().stream().filter(n->n.getColor()==Color.WHITE).collect(Collectors.toList());
+		List<ChessPiece> black = match.getPiecesCaptured().stream().filter(n->n.getColor()==Color.BLACK).collect(Collectors.toList());		
 		
 		System.out.println("Captured pieces: ");		
 		System.out.print("WHITE ");
@@ -122,6 +128,19 @@ public class UI {
 		System.out.print(ANSI_YELLOW);
 		System.out.println(Arrays.toString(black.toArray()));
 		System.out.print(ANSI_RESET);
+	}
+	
+	private static void printMovementHistory(ChessMatch match) {
+		
+		System.out.println("Movement History: ");		
+		System.out.print("WHITE ");
+		System.out.print(ANSI_WHITE);
+		System.out.println(Arrays.toString(match.getWriteHistoryMovement().toArray()));
+		System.out.print(ANSI_RESET);
+		System.out.print("BLACK ");
+		System.out.print(ANSI_YELLOW);
+		System.out.println(Arrays.toString(match.getBlackHistoryMovement().toArray()));
+		System.out.print(ANSI_RESET);	
 	}
 
 }
